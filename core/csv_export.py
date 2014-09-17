@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-import unicodecsv
+import csv
 
 from django.http import HttpResponse
 from django.db import models
@@ -119,7 +119,8 @@ def make_writer(output_stream, dialect):
         from .excel_export import XlsxWriter
         return XlsxWriter(output_stream)
     else:
-        return unicodecsv.writer(output_stream, encoding=ENCODING, dialect=dialect)
+        # TODO apply encoding
+        return csv.writer(output_stream, dialect=dialect)
 
 
 def export_csv(event, model, model_instances, output_file, m2m_mode='separate_columns', dialect='excel-tab'):
