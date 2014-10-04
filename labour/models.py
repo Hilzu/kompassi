@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.timezone import now
 
 from core.csv_export import CsvExportMixin
-from core.models import EventMetaBase
+from core.models import EventMetaBase, Signup
 from core.utils import (
     alias_property,
     ensure_user_is_member_of_group,
@@ -616,6 +616,7 @@ STATE_TIME_FIELDS = [
 
 
 class Signup(models.Model, CsvExportMixin):
+    core_signup = models.ForeignKey('core.Signup')
     person = models.ForeignKey('core.Person')
     event = models.ForeignKey('core.Event')
 

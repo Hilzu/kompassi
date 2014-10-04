@@ -10,7 +10,13 @@ from django.template.loader import render_to_string
 from django.utils.dateformat import format as format_date
 from django.utils import timezone
 
-from .utils import validate_slug, SLUG_FIELD_PARAMS, url, ensure_group_exists
+from .utils import (
+    ensure_group_exists,
+    NONUNIQUE_SLUG_FIELD_PARAMS,
+    SLUG_FIELD_PARAMS,
+    url,
+    validate_slug,
+)
 
 
 class Venue(models.Model):
@@ -617,6 +623,85 @@ class EmailVerificationError(RuntimeError):
 
 class PasswordResetError(RuntimeError):
     pass
+
+
+class Perk(models.Model):
+    event = models.ForeignKey(Event)
+    slug = models.CharField(**NONUNIQUE_SLUG_FIELD_PARAMS)
+    name = models.CharField(max_length=63)
+
+    class Meta:
+        verbose_name = u'etu'
+        verbose_name_plural = u'edut'
+
+        unique_together = [
+            ('event', 'slug'),
+        ]
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.name and not self.slug:
+            self.slug = slugify(self.name)
+
+        return super(Perk, self).save(*args, **kwargs)
+
+
+class PersonnelClass(models.Model):
+    event = models.ForeignKey(Event)
+    app_label = models.CharField(max_length=63, blank=True, default="")
+    name = models.CharField(max_length=63)
+    slug = models.CharField(**NONUNIQUE_SLUG_FIELD_PARAMS)
+    perks = models.ManyToManyField(Perk, blank=True)
+
+    class Meta:
+        verbose_name = u'henkilöstöluokka'
+        verbose_name_plural = u'henkilöstöluokat'
+
+        unique_together = [
+            ('event', 'slug'),
+        ]
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.name and not self.slug:
+            self.slug = slugify(self.name)
+
+        return super(PersonnelClass, self).save(*args, **kwargs)     
+
+
+class Signup(models.Model):
+    personnel_class = models.ForeignKey(PersonnelClass)
+    person = models.ForeignKey(Person, related_name='core_signup_set')
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = u'ilmoittautuminen'
+        verbose_name_plural = u'ilmoittautumiset'
+
+        unique_together = [
+            ('personnel_class', 'person')
+        ]
+
+    @property
+    def event(self):
+        return self.personnel_class.event if self.personnel_class is not None else None
+
+    # for admin
+    @property
+    def first_name(self):
+        return self.person.first_name if self.person is not None else None
+
+    @property
+    def surname(self):
+        return self.person.surname if self.person is not None else None
+
+    @property
+    def nick(self):
+        return self.person.nick if self.person is not None else None
 
 
 __all__ = [

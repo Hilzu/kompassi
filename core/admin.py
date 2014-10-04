@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.conf import settings
 
-from .models import Event, Person, Venue
+from .models import Event, Person, Venue, Signup, PersonnelClass, Perk
 
 
 def merge_selected_people(modeladmin, request, queryset):
@@ -80,6 +80,24 @@ class EventAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
+class PersonnelClassAdmin(admin.ModelAdmin):
+    list_display = ('event', 'name')
+    list_filter = ('event',)
+
+
+class PerkAdmin(admin.ModelAdmin):
+    list_display = ('event', 'name')
+    list_filter = ('event',)
+
+
+class SignupAdmin(admin.ModelAdmin):
+    list_display = ('event', 'personnel_class', 'surname', 'first_name', 'nick')
+    list_filter = ('personnel_class__event',)
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Venue)
+admin.site.register(PersonnelClass, PersonnelClassAdmin)
+admin.site.register(Perk, PerkAdmin)
+admin.site.register(Signup, SignupAdmin)

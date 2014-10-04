@@ -12,6 +12,7 @@ pyjade==3.0.0
 python-dateutil==2.2
 python-memcached==1.53
 django-crispy-forms==1.4.0
+django-localflavor==1.0
 requests==2.4.1
 django-ipware==0.0.8
 XlsxWriter==0.5.7

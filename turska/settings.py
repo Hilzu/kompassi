@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'tracon_branding',
     'tracon8',
     'tracon9',
+    'traconx',
     'kawacon2014',
     'concon9',
 )
