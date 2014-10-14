@@ -616,7 +616,7 @@ STATE_TIME_FIELDS = [
 
 
 class Signup(models.Model, CsvExportMixin):
-    core_signup = models.ForeignKey('core.Signup')
+    core_signup = models.ForeignKey('core.Signup', null=True, blank=True)
     person = models.ForeignKey('core.Person')
     event = models.ForeignKey('core.Event')
 
