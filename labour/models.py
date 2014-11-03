@@ -616,9 +616,7 @@ STATE_TIME_FIELDS = [
 
 
 class Signup(models.Model, CsvExportMixin):
-    core_signup = models.ForeignKey('core.Signup', null=True, blank=True)
-    person = models.ForeignKey('core.Person')
-    event = models.ForeignKey('core.Event')
+    core_signup = models.ForeignKey('core.Signup')
 
     job_categories = models.ManyToManyField(JobCategory,
         verbose_name=u'Haettavat tehtävät',
@@ -756,6 +754,14 @@ class Signup(models.Model, CsvExportMixin):
         e = self.event.name if self.event else 'None'
 
         return u'{p} / {e}'.format(**locals())
+
+    @property
+    def person(self):
+        return self.core_signup.person
+
+    @property
+    def event(self):
+        return self.core_signup.event
 
     @property
     def signup_extra_model(self):

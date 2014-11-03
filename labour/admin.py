@@ -17,9 +17,9 @@ from .models import (
 class SignupAdmin(admin.ModelAdmin):
     model = Signup
     list_display = ('event', 'full_name', 'formatted_state')
-    list_filter = ('event',)
-    ordering = ('event', 'person__surname', 'person__surname')
-    search_fields = ('person__surname', 'person__first_name', 'person__nick', 'person__email')
+    list_filter = ('core_signup__personnel_class__event',)
+    ordering = ('core_signup__personnel_class__event', 'core_signup__person__surname', 'core_signup__person__surname')
+    search_fields = ('core_signup__person__surname', 'core_signup__person__first_name', 'core_signup__person__nick', 'core_signup__person__email')
 
 class InlineLabourEventMetaAdmin(admin.StackedInline):
     model = LabourEventMeta

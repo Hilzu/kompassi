@@ -4,6 +4,15 @@ Formerly known as Turska and ConDB. Simple web app for managing (Tra)con stuff. 
 
 ## Getting Started
 
+Install native dependencies:
+
+    # Mac OS X
+    brew install postgresql
+    
+    # Ubuntu, CentOS etc. TODO
+
+Install Python dependencies and setup Kompassi:
+
     virtualenv venv-kompassi
     source venv-kompassi/bin/activate
     git clone https://github.com/japsu/kompassi.git
