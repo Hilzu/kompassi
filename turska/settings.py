@@ -24,10 +24,10 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'turska.sqlite3',                      # Or path to database file if using sqlite3.
-        'USER': '',
-        'PASSWORD': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'condb',                      # Or path to database file if using sqlite3.
+        'USER': 'condb',
+        'PASSWORD': 'mee6kei6Ahxo6oehiepieboh8uo4thoo',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
@@ -213,7 +213,7 @@ KOMPASSI_APPLICATION_NAME = u'Kompassi'
 KOMPASSI_INSTALLATION_NAME = u'Kompassi (DEV)'
 KOMPASSI_INSTALLATION_NAME_ILLATIVE = u'Kompassin kehitysinstanssiin'
 KOMPASSI_INSTALLATION_NAME_GENITIVE = u'Kompassin kehitysinstanssin'
-KOMPASSI_INSTALLATION_SLUG = 'turskadev'
+KOMPASSI_INSTALLATION_SLUG = 'turska'
 KOMPASSI_ACCOUNT_BRANDING = u'Tracon-tunnus'
 KOMPASSI_ACCOUNT_BRANDING_PARTITIVE = u'Tracon-tunnusta'
 KOMPASSI_ACCOUNT_BRANDING_ADESSIVE = u'Tracon-tunnuksella'
