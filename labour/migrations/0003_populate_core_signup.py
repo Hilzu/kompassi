@@ -8,13 +8,14 @@ def populate_core_signup(apps, schema_editor):
     Badge = apps.get_model('badges', 'Badge')
     CoreSignup = apps.get_model('core', 'Signup')
     LabourSignup = apps.get_model('labour', 'Signup')
+    PersonnelClass = apps.get_model('core', 'PersonnelClass')
 
     for labour_signup in LabourSignup.objects.all():
         event = labour_signup.event
         person = labour_signup.person
 
         try:
-            badge = Badge.objects.get(event=event, person=person)
+            badge = Badge.objects.get(template__event=event, person=person)
         except Badge.DoesNotExist:
             personnel_class, unused = PersonnelClass.objects.get_or_create(
                 event=event,
