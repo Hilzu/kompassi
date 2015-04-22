@@ -85,7 +85,6 @@ class Room(models.Model):
     venue = models.ForeignKey('core.Venue')
     name = models.CharField(max_length=1023)
     order = models.IntegerField()
-    public = models.BooleanField(default=True)
     notes = models.TextField(blank=True)
 
     def __unicode__(self):
@@ -166,6 +165,17 @@ RECORDING_PERMISSION_CHOICES = [
 ]
 START_TIME_LABEL = u'Alkuaika'
 
+STATE_CHOICES = [
+    (u'idea', u'Ideoitu sisäisti'),
+    (u'asked', u'Kysytty ohjelmanjärjestäjältä'),
+    (u'offered', u'Ohjelmatarjous vastaanotettu'),
+    (u'accepted', u'Hyväksytty'),
+    (u'published', u'Julkaistu'),
+
+    (u'cancelled', u'Peruutettu'),
+    (u'rejected', u'Hylätty'),
+]
+
 
 class Programme(models.Model, CsvExportMixin):
     category = models.ForeignKey(Category, verbose_name=u'Ohjelmaluokka')
@@ -208,6 +218,13 @@ class Programme(models.Model, CsvExportMixin):
         help_text=u'Jos haluat sanoa ohjelmanumeroosi liittyen jotain, mikä ei sovi mihinkään yllä olevista kentistä, käytä tätä kenttää.',
     )
 
+    state = models.CharField(
+        max_length=15,
+        choices=STATE_CHOICES,
+        default='accepted',
+        verbose_name=u'Ohjelmanumeron tila',
+        help_text=u'Tilassa "Julkaistu" olevat ohjelmat näkyvät ohjelmakartassa, jos ohjelmakartta on julkinen.',
+    )
     start_time = models.DateTimeField(blank=True, null=True, verbose_name=START_TIME_LABEL)
     length = models.IntegerField(
         blank=True,
@@ -250,12 +267,12 @@ class Programme(models.Model, CsvExportMixin):
         return self.category.style if self.category.style else ''
 
     @property
-    def public(self):
-        return self.category.public
-
-    @property
     def event(self):
         return self.category.event
+
+    @property
+    def is_active(self):
+        return self.state not in ['rejected', 'cancelled']
 
     def send_edit_codes(self, request):
         for person in self.organizers.all():
@@ -302,8 +319,8 @@ class Programme(models.Model, CsvExportMixin):
         return self.room.name if self.room is not None else None
 
     @property
-    def public(self):
-        return self.category.public if self.category is not None else False
+    def is_public(self):
+        return self.state == 'published' and self.category is not None and self.category.public
 
     def as_json(self):
         from api.utils import pick_attrs
@@ -372,12 +389,11 @@ class ViewMethodsMixin(object):
             prev_start_time = start_time
 
             results.append((start_time, incontinuity, cur_row))
-            for room in self.public_rooms:
+            for room in self.rooms.all():
                 try:
                     programme = room.programme_set.get(
                         category__event=self.event,
                         start_time=start_time,
-                        room__public=True,
                         length__isnull=False,
                     )
                     rowspan = self.rowspan(programme)
@@ -411,10 +427,6 @@ class ViewMethodsMixin(object):
 
         return sorted(set(result))
 
-    @property
-    def public_rooms(self):
-        return self.rooms.filter(public=True)
-
     def rowspan(self, programme):
         return len(self.start_times(programme=programme))
 
@@ -440,7 +452,7 @@ class AllRoomsPseudoView(ViewMethodsMixin):
         self.name = 'All rooms'
         self.public = True
         self.order = 0
-        self.rooms = Room.objects.filter(venue=event.venue)
+        self.rooms = Room.objects.filter(venue=event.venue, view__event=event)
         self.event = event
 
 

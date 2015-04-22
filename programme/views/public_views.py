@@ -107,7 +107,7 @@ def programme_mobile_timetable_view(request, event):
     all_rooms = AllRoomsPseudoView(event)
 
     programmes_by_room = []
-    for room in all_rooms.public_rooms:
+    for room in all_rooms.rooms.all():
         t = now()
         current_programme = room.programme_set.filter(start_time__lte=t, category__public=True).order_by('-start_time')[0:1]
         current_programme = current_programme[0] if current_programme else None
